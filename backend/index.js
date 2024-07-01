@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/chat", (req, res) => {
-  console.log('req reached')
+  // console.log('req reached')
   res.send(chats);
 });
 
