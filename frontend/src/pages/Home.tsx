@@ -10,12 +10,11 @@ import {
 } from "@chakra-ui/react";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
-
 function Home() {
   return (
     <Container maxW="xl" centerContent>
       <Box
-        display="flex"
+         display="flex"
         justifyContent="center"
         p={3}
         bg="white"
@@ -23,17 +22,16 @@ function Home() {
         m="40px 0 15px 0"
         borderRadius="lg"
         borderWidth="1px"
-        boxShadow="lg"
       >
-        <Text fontSize="4xl" fontFamily="Work Sans" fontWeight="bold">
+        <Text fontSize="4xl" fontFamily="Work sans">
           Talk-A-Tive
         </Text>
       </Box>
-      <Box bg="white" p={6} borderRadius="lg" boxShadow="lg" width="100%">
-        <Tabs variant="enclosed-colored" colorScheme="teal">
-          <TabList mb="1em" justifyContent="center">
-            <Tab _selected={{ color: "white", bg: "teal.500" }}>Login</Tab>
-            <Tab _selected={{ color: "white", bg: "teal.500" }}>Sign Up</Tab>
+      <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
+        <Tabs isFitted variant="soft-rounded">
+          <TabList mb="1em">
+            <Tab>Login</Tab>
+            <Tab>Sign Up</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
