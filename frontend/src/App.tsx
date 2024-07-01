@@ -10,9 +10,6 @@ function App() {
         <Routes>
           <Route path="/" Component={Home}/>
           <Route path="/chats" Component={Chat}/>
-
-          
-
         
         </Routes>
       </BrowserRouter>
