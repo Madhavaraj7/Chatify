@@ -127,3 +127,59 @@ export const renameGroup = async (req, res) => {
   }
 };
 
+export const addToGroup = async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  try {
+    // check if the requester is admin
+
+    const added = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $push: { users: userId },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!added) {
+      return res.status(404).json({ message: "Chat Not Found" });
+    }
+
+    res.json(added);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const removeFromGroup = async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  try {
+    // Check if the requester is admin (you might need to implement this check)
+
+    const removed = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $pull: { users: userId },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!removed) {
+      res.status(404).json({ message: "Chat Not Found" });
+    } else {
+      res.json(removed);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
