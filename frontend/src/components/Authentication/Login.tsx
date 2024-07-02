@@ -2,14 +2,91 @@ import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/toast";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const handleClick = () => setShow(!show);
+
+  const validateForm = () => {
+    if (!email || !password) {
+      return "Email and password are required.";
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return "Invalid email address.";
+    }
+    if (password.includes(" ")) {
+      return "Password should not contain spaces.";
+    }
+    return null;
+  };
+
+  const submitHandler = async () => {
+    const validationError = validateForm();
+    if (validationError) {
+      toast({
+        title: "Validation Error",
+        description: validationError,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        let errorMessage = "Email or password incorrect!";
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+        throw new Error(errorMessage);
+      }
+  
+      const data = await response.json();
+      toast({
+        title: "Registration Successful",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      console.log("Login successful", data);
+      navigate("/chats"); // Redirect to dashboard or appropriate page
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <VStack spacing="10px">
@@ -18,6 +95,7 @@ const Login = () => {
         <Input
           type="email"
           placeholder="Enter Your Email Address"
+          value={email}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         />
       </FormControl>
@@ -27,6 +105,7 @@ const Login = () => {
           <Input
             type={show ? "text" : "password"}
             placeholder="Enter password"
+            value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           />
           <InputRightElement width="4.5rem">
@@ -36,7 +115,13 @@ const Login = () => {
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <Button colorScheme="blue" width="100%" mt={4}>
+      <Button
+        colorScheme="blue"
+        width="100%"
+        mt={4}
+        onClick={submitHandler}
+        isLoading={loading}
+      >
         Login
       </Button>
       <Button
@@ -44,7 +129,8 @@ const Login = () => {
         colorScheme="red"
         width="100%"
         onClick={() => {
-          // Optionally set default credentials
+          setEmail("guest@example.com");
+          setPassword("guestpassword");
         }}
       >
         Get Guest User Credentials
