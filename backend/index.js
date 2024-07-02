@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { chats } from "./data/data.js";
 import connectDB from "./config/db.js";
 import router from "./routes/userRoutes.js";
+import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
 
@@ -23,6 +24,15 @@ app.get("/api/chat", (req, res) => {
   res.send(chats);
 });
 app.use("/api/user", router);
+
+
+
+
+
+// Error Handling middlewares
+app.use(notFound);
+app.use(errorHandler);
+
 
 
 const PORT = process.env.PORT || 5000;
