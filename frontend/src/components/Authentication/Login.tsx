@@ -35,11 +35,11 @@ const Login = () => {
     const validationError = validateForm();
     if (validationError) {
       toast({
-        title: "Validation Error",
-        description: validationError,
-        status: "error",
+        title: "Please Fill all the Fields",
+        status: "warning",
         duration: 5000,
         isClosable: true,
+        position: "bottom",
       });
       return;
     }
