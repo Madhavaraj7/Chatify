@@ -102,5 +102,28 @@ export const createGroupChat = async (req, res) => {
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
-  
+
 };
+
+export const renameGroup = async (req, res) => {
+  const { chatId, chatName } = req.body;
+
+  try {
+    const updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      { chatName },
+      { new: true }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!updatedChat) {
+      return res.status(404).json({ message: "Chat Not Found" });
+    }
+
+    res.json(updatedChat);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
