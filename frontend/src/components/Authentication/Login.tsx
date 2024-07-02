@@ -73,7 +73,8 @@ const Login = () => {
         position: "bottom",
       });
       console.log("Login successful", data);
-      navigate("/chats"); // Redirect to dashboard or appropriate page
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      navigate("/chats"); 
     } catch (error: any) {
       toast({
         title: "Error",

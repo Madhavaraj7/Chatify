@@ -1,23 +1,18 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-// import Chat from "./pages/Chat";
 import Chat from "./pages/Chat";
 import "./App.css";
 
-
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" Component={Home}/>
-          <Route path="/chats" Component={Chat}/>
-        
-        </Routes>
-      </BrowserRouter>
-
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/chats" element={<Chat />} />
+      </Routes>
     </div>
   );
-}
+};
 
 export default App;
