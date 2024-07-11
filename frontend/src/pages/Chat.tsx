@@ -9,16 +9,16 @@ import { ChatState } from "../context/ChatProvider";
 
 
 const Chatpage = () => {
-  // const [fetchAgain, setFetchAgain] = useState(false);
+  const [fetchAgain, setFetchAgain] = useState(false);
   const { user } = ChatState();
 
   return (
     <div style={{ width: "100%" }}>
       {user && <SideDrawer />}
       <Box display="flex" justifyContent="space-between" w="100%" h="91.5vh" p="10px">
-        {user && <Mychats />}
+        {user && <Mychats fetchAgain={fetchAgain}  />}
         {user && (
-          <ChatBox  />
+          <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}
       </Box>
     </div>
