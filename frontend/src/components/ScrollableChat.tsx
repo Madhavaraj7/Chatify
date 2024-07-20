@@ -8,6 +8,7 @@ import {
   isSameUser,
 } from "../config/chatLogic";
 import { ChatState } from "../context/ChatProvider";
+import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react";
 
 const ScrollableChat = ({ messages }) => {
   const { user } = ChatState();
@@ -19,7 +20,7 @@ const ScrollableChat = ({ messages }) => {
 
   return (
     <ScrollableFeed>
-      {messages.map((m, i) => (
+      {messages.map((m: { _id: Key | null | undefined; sender: { name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined; pic: string | undefined; _id: any; }; content: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, i: any) => (
         <div style={{ display: "flex" }} key={m._id}>
           {(isSameSender(messages, m, i, user._id) ||
             isLastMessage(messages, i, user._id)) && (

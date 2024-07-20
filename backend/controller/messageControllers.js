@@ -1,8 +1,6 @@
-import asyncHandler from 'express-async-handler';
-import Message from '../models/messageModel';
-import User from '../models/userModel';
-import Chat from '../models/chatModel';
-
+import Message from '../models/messageModel.js';
+import User from '../models/userModel.js';
+import Chat from '../models/chatModel.js';
 
 const allMessages = async (req, res) => {
   try {
@@ -33,12 +31,10 @@ const sendMessage = async (req, res) => {
   try {
     let message = await Message.create(newMessage);
 
-    message = await message.populate('sender', 'name pic').execPopulate();
-    message = await message.populate('chat').execPopulate();
-    message = await User.populate(message, {
-      path: 'chat.users',
-      select: 'name pic email',
-    });
+    // Populate fields using separate calls
+    message = await Message.populate(message, { path: 'sender', select: 'name pic email' });
+    message = await Message.populate(message, { path: 'chat' });
+    message = await Message.populate(message, { path: 'chat.users', select: 'name pic email' });
 
     await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
 

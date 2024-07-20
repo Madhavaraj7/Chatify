@@ -1,3 +1,5 @@
+import { Key, ReactPortal, ReactElement, JSXElementConstructor, ReactNode } from "react";
+
 export const isSameSenderMargin = (messages, m, i, userId) => {
     // console.log(i === messages.length - 1);
   
@@ -17,7 +19,7 @@ export const isSameSenderMargin = (messages, m, i, userId) => {
     else return "auto";
   };
   
-  export const isSameSender = (messages, m, i, userId) => {
+  export const isSameSender = (messages: string | any[], m: { _id?: Key | null | undefined; sender: any; content?: string | number | boolean | ReactPortal | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined; }, i: number, userId: any) => {
     return (
       i < messages.length - 1 &&
       (messages[i + 1].sender._id !== m.sender._id ||
@@ -26,7 +28,7 @@ export const isSameSenderMargin = (messages, m, i, userId) => {
     );
   };
   
-  export const isLastMessage = (messages, i, userId) => {
+  export const isLastMessage = (messages: string | any[], i: number, userId: any) => {
     return (
       i === messages.length - 1 &&
       messages[messages.length - 1].sender._id !== userId &&
@@ -34,7 +36,7 @@ export const isSameSenderMargin = (messages, m, i, userId) => {
     );
   };
   
-  export const isSameUser = (messages, m, i) => {
+  export const isSameUser = (messages, m, i, _id: any) => {
     return i > 0 && messages[i - 1].sender._id === m.sender._id;
   };
   
