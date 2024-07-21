@@ -1,13 +1,12 @@
-
 import { FormControl } from "@chakra-ui/form-control";
-import { Input } from "@chakra-ui/input";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { Box, Text } from "@chakra-ui/layout";
 import "./styles.css";
 import { IconButton, Spinner, useToast } from "@chakra-ui/react";
 import { getSender, getSenderFull } from "../config/chatLogic";
 import { SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons"; // Import the ArrowForwardIcon
 import ProfileModal from "./miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
@@ -20,7 +19,8 @@ import { DefaultEventsMap } from "@socket.io/component-emitter";
 const ENDPOINT = "http://localhost:5000"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
 var socket: Socket<DefaultEventsMap, DefaultEventsMap>, selectedChatCompare: { _id: any; };
 
-const SingleChat = ({ fetchAgain, setFetchAgain }:any) => {
+
+const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
@@ -72,8 +72,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }:any) => {
     }
   };
 
-  const sendMessage = async (event: { key: string; }) => {
-    if (event.key === "Enter" && newMessage) {
+  const sendMessage = async (event: { key: string; type: string }) => {
+    if ((event.key === "Enter" || event.type === "click") && newMessage) {
       socket.emit("stop typing", selectedChat._id);
       try {
         const config = {
@@ -139,7 +139,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }:any) => {
     });
   });
 
-  const typingHandler = (e: { target: { value: SetStateAction<string>; }; }) => {
+  const typingHandler = (e: { target: { value: SetStateAction<string> } }) => {
     setNewMessage(e.target.value);
 
     if (!socketConnected) return;
@@ -177,7 +177,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }:any) => {
             <IconButton
               display={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
-              onClick={() => setSelectedChat("")} aria-label={""}            />
+              onClick={() => setSelectedChat("")}
+              aria-label={""}
+            />
             {messages &&
               (!selectedChat.isGroupChat ? (
                 <>
@@ -222,12 +224,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }:any) => {
               </div>
             )}
 
-            <FormControl
-              onKeyDown={sendMessage}
-              id="first-name"
-              isRequired
-              mt={3}
-            >
+            <FormControl id="first-name" isRequired mt={3}>
               {istyping ? (
                 <div>
                   <Lottie
@@ -240,13 +237,30 @@ const SingleChat = ({ fetchAgain, setFetchAgain }:any) => {
               ) : (
                 <></>
               )}
-              <Input
-                variant="filled"
-                bg="#E0E0E0"
-                placeholder="Enter a message.."
-                value={newMessage}
-                onChange={typingHandler}
-              />
+              <InputGroup>
+                <Input
+                  variant="filled"
+                  bg="#E0E0E0"
+                  placeholder="Enter a message.."
+                  value={newMessage}
+                  onChange={typingHandler}
+                  onKeyDown={sendMessage}
+                  border="2px solid #3182CE"
+                  borderRadius="full"
+                  focusBorderColor="#3182CE"
+                  _placeholder={{ color: "gray.500" }}
+                  _hover={{ bg: "#CBD5E0" }}
+                />
+                <InputRightElement>
+                  <IconButton
+                    icon={<ArrowForwardIcon />}
+                    onClick={sendMessage}
+                    aria-label="Send message"
+                    colorScheme="blue"
+                    borderRadius="full"
+                  />
+                </InputRightElement>
+              </InputGroup>
             </FormControl>
           </Box>
         </>

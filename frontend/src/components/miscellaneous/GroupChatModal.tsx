@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../userAvatar/UserBadgeItem";
 import UserListItem from "../userAvatar/UserListItem";
@@ -24,7 +24,7 @@ import UserListItem from "../userAvatar/UserListItem";
 interface User {
   _id: string;
   name: string;
-  // Add other properties as needed
+  email: string; // Add other properties as needed
 }
 
 interface GroupChatModalProps {
@@ -53,7 +53,7 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
       });
       return;
     }
-    setSelectedUsers([...selectedUsers, userToAdd]);
+    setSelectedUsers((prevSelected) => [...prevSelected, userToAdd]);
     setSearch(""); // Clear the search input
     setSearchResult([]); // Clear the search results
   };
@@ -73,9 +73,8 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
         },
       };
       const { data } = await axios.get<User[]>(`http://localhost:5000/api/user?search=${query}`, config);
-      setLoading(false);
       setSearchResult(data);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error Occurred!",
         description: "Failed to Load the Search Results",
@@ -84,12 +83,13 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
         isClosable: true,
         position: "bottom-left",
       });
+    } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = (delUser: User) => {
-    setSelectedUsers(selectedUsers.filter((sel) => sel._id !== delUser._id));
+    setSelectedUsers((prevSelected) => prevSelected.filter((sel) => sel._id !== delUser._id));
   };
 
   const handleSubmit = async () => {
@@ -132,10 +132,10 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
       setSelectedUsers([]);
       setSearch("");
       setSearchResult([]);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Failed to Create the Chat!",
-        description: error.response?.data || error.message,
+        description: (error as any).response?.data || (error as Error).message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -166,7 +166,7 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
                 placeholder="Chat Name"
                 mb={3}
                 value={groupChatName}
-                onChange={(e) => setGroupChatName(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setGroupChatName(e.target.value)}
               />
             </FormControl>
             <FormControl>
@@ -174,7 +174,7 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
                 placeholder="Add Users eg: Madhav, Hunais, Liston"
                 mb={1}
                 value={search}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handleSearch(e.target.value)}
               />
             </FormControl>
             <Box w="100%" display="flex" flexWrap="wrap" mt={2}>
@@ -182,9 +182,7 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
                 <UserBadgeItem
                   key={u._id}
                   user={u}
-                  handleFunction={() => handleDelete(u)}
-                  admin={undefined}
-                />
+                  handleFunction={() => handleDelete(u)} admin={undefined}                />
               ))}
             </Box>
             {loading ? (
@@ -192,7 +190,7 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
             ) : (
               <Box w="100%" mt={2}>
                 {searchResult
-                  ?.slice(0, 4)
+                  .slice(0, 4)
                   .map((user) => (
                     <UserListItem
                       key={user._id}
