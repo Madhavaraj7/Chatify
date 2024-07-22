@@ -1,13 +1,33 @@
+// {
+//   "compilerOptions": {
+//     "composite": true,
+//     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+//     "skipLibCheck": true,
+//     "module": "ESNext",
+//     "moduleResolution": "bundler",
+//     "allowSyntheticDefaultImports": true,
+//     "strict": true,
+//     "noEmit": true
+//   },
+//   "include": ["vite.config.ts"]
+// }
+
+
 {
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "target": "ESNext", // or ES6, depending on your needs
+    "module": "ESNext", // Vite uses native ES modules
+    "moduleResolution": "node", // For resolving modules like in Node.js
+    "jsx": "react-jsx", // For React 17+ projects
+    "strict": true, // Enable all strict type-checking options
+    "esModuleInterop": true, // For compatibility with commonjs modules
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["node_modules/@types"], // Look for type definitions here
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "noEmit": true
+    "noEmit": true, // No emit because Vite handles the build
+    "resolveJsonModule": true // Allows importing JSON files
   },
-  "include": ["vite.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"], // Include React files
+  "exclude": ["node_modules", "dist"]
 }
