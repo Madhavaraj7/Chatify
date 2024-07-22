@@ -37,6 +37,7 @@ app.use(
 
 // Routes
 app.use("/api/user", userRoute);
+
 app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
 
