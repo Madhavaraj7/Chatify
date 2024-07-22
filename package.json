@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "cd frontend && npm install --legacy-peer-deps && npm i --save-dev @types/react && && npm run build && cd .. && cd backend && npm install --legacy-peer-deps && npm run start"
+    "build": "cd frontend && npm install --legacy-peer-deps && npm i --save-dev @types/react && npm run build && cd .. && cd backend && npm install --legacy-peer-deps && npm run start"
   },
   "author": "",
   "license": "ISC"
