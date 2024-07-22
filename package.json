@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon backend/index.js",
-   "build": "npm install && cd frontend && npm install && npm run build && cd .. "
+    "build": "npm install --legacy-peer-deps && npm install --legacy-peer-deps --prefix frontend && npm run build --prefix frontend"
 
   },
   "author": "Madhav",
