@@ -10,14 +10,14 @@ import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons"; // Import th
 import ProfileModal from "./miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
-import animationData from "../animations/typing.json";
+import * as animationData from "../animations/typing.json";
 
 import io, { Socket } from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../context/ChatProvider";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 const ENDPOINT = import.meta.env.VITE_APP_BACKEND_ENV ; // "https://talk-a-tive.herokuapp.com"; -> After deployment
-var socket: Socket<DefaultEventsMap, DefaultEventsMap>, selectedChatCompare: { _id: any; };
+let socket: Socket<DefaultEventsMap, DefaultEventsMap>, selectedChatCompare: { _id: any; };
 
 
 const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
@@ -153,11 +153,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
       setTyping(true);
       socket.emit("typing", selectedChat._id);
     }
-    let lastTypingTime = new Date().getTime();
-    var timerLength = 3000;
+    const lastTypingTime = new Date().getTime();
+    const timerLength = 3000;
     setTimeout(() => {
-      var timeNow = new Date().getTime();
-      var timeDiff = timeNow - lastTypingTime;
+      const timeNow = new Date().getTime();
+      const timeDiff = timeNow - lastTypingTime;
       if (timeDiff >= timerLength && typing) {
         socket.emit("stop typing", selectedChat._id);
         setTyping(false);
