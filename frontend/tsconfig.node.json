@@ -26,7 +26,8 @@
     "typeRoots": ["node_modules/@types"], // Look for type definitions here
     "allowSyntheticDefaultImports": true,
     "noEmit": true, // No emit because Vite handles the build
-    "resolveJsonModule": true // Allows importing JSON files
+    "resolveJsonModule": true, // Allows importing JSON files
+    "noImplicitAny": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"], // Include React files
   "exclude": ["node_modules", "dist"]
