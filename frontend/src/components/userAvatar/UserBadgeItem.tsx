@@ -1,7 +1,7 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { Badge } from "@chakra-ui/layout";
 
-const UserBadgeItem = ({ user, handleFunction, admin }) => {
+const UserBadgeItem = ({ user, handleFunction, admin }:any) => {
   return (
     <Badge
       px={2}

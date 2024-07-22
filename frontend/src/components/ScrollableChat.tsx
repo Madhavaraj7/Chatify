@@ -1,3 +1,4 @@
+import React from 'react';
 import { Avatar } from "@chakra-ui/avatar";
 import { Tooltip } from "@chakra-ui/tooltip";
 import ScrollableFeed from "react-scrollable-feed";
@@ -8,9 +9,24 @@ import {
   isSameUser,
 } from "../config/chatLogic";
 import { ChatState } from "../context/ChatProvider";
-import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react";
 
-const ScrollableChat = ({ messages }) => {
+interface Sender {
+  name: string;
+  pic?: string;
+  _id: string;
+}
+
+interface Message {
+  _id: string;
+  sender: Sender;
+  content: React.ReactNode; // Use React.ReactNode to cover various content types
+}
+
+interface ScrollableChatProps {
+  messages: Message[];
+}
+
+const ScrollableChat: React.FC<ScrollableChatProps> = ({ messages }) => {
   const { user } = ChatState();
 
   // Ensure messages is always an array
@@ -20,7 +36,7 @@ const ScrollableChat = ({ messages }) => {
 
   return (
     <ScrollableFeed>
-      {messages.map((m: { _id: Key | null | undefined; sender: { name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined; pic: string | undefined; _id: any; }; content: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, i: any) => (
+      {messages.map((m, i) => (
         <div style={{ display: "flex" }} key={m._id}>
           {(isSameSender(messages, m, i, user._id) ||
             isLastMessage(messages, i, user._id)) && (
@@ -31,7 +47,7 @@ const ScrollableChat = ({ messages }) => {
                 size="sm"
                 cursor="pointer"
                 name={m.sender.name}
-                src={m.sender.pic}
+                src={m.sender.pic} // Ensure m.sender.pic is either a valid URL or undefined
               />
             </Tooltip>
           )}

@@ -1,6 +1,6 @@
 import { Key, ReactPortal, ReactElement, JSXElementConstructor, ReactNode } from "react";
 
-export const isSameSenderMargin = (messages, m, i, userId) => {
+export const isSameSenderMargin = (messages: string | any[], m:any, i: number, userId: any) => {
     // console.log(i === messages.length - 1);
   
     if (
@@ -36,14 +36,16 @@ export const isSameSenderMargin = (messages, m, i, userId) => {
     );
   };
   
-  export const isSameUser = (messages, m, i, _id: any) => {
+  export const isSameUser = (messages: { sender: { _id: any; }; }[], m:any, i: number, _id: any) => {
     return i > 0 && messages[i - 1].sender._id === m.sender._id;
   };
   
-  export const getSender = (loggedUser, users) => {
+  export const getSender = (loggedUser: { _id: string; name: string; email: string; token: string; } | null, users: {
+    _id: string | undefined; name: any; 
+}[]) => {
     return users[0]?._id === loggedUser?._id ? users[1].name : users[0].name;
   };
   
-  export const getSenderFull = (loggedUser, users) => {
+  export const getSenderFull = (loggedUser: { _id: any; }, users: any[]) => {
     return users[0]._id === loggedUser._id ? users[1] : users[0];
   };

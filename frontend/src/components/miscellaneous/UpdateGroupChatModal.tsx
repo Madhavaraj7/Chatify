@@ -3,7 +3,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   Button,
@@ -16,7 +15,8 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
-import axios from "axios";
+import axios from 'axios';
+
 import { useState, useEffect } from "react";
 import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../userAvatar/UserBadgeItem";
@@ -25,13 +25,14 @@ import UserListItem from "../userAvatar/UserListItem";
 interface User {
   _id: string;
   name: string;
+  email:string;
   // Add other properties as needed
 }
 
 const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }:any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState("");
-  const [search, setSearch] = useState("");
+  const [, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [renameloading, setRenameLoading] = useState(false);
@@ -76,7 +77,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }:any) 
 
   const handleRename = async () => {
     if (!groupChatName) return;
-
+  
     try {
       setRenameLoading(true);
       const config = {
@@ -92,80 +93,103 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }:any) 
         },
         config
       );
-
+  
       setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       setRenameLoading(false);
       setGroupChatName(""); // Clear input after successful rename
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
+      if (axios.isAxiosError(error)) {
+        toast({
+          title: "Error Occurred!",
+          description: error.response?.data?.message || 'An unknown error occurred',
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else {
+        toast({
+          title: "Unexpected Error!",
+          description: "An unexpected error occurred",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
       setRenameLoading(false);
     }
   };
 
-  const handleAddUser = async (user1: User) => {
-    if (selectedChat.users.find((u: { _id: string; }) => u._id === user1._id)) {
-      toast({
-        title: "User Already in group!",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      return;
-    }
+const handleAddUser = async (user1: User) => {
+  if (selectedChat.users.find((u: { _id: string; }) => u._id === user1._id)) {
+    toast({
+      title: "User Already in group!",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+      position: "bottom",
+    });
+    return;
+  }
 
-    if (selectedChat.groupAdmin._id !== user._id) {
-      toast({
-        title: "Only admins can add someone!",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      return;
-    }
+  if (selectedChat.groupAdmin._id !== user._id) {
+    toast({
+      title: "Only admins can add someone!",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+      position: "bottom",
+    });
+    return;
+  }
 
-    try {
-      setLoading(true);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      const { data } = await axios.put(
-        `http://localhost:5000/api/chat/groupadd`,
-        {
-          chatId: selectedChat._id,
-          userId: user1._id,
-        },
-        config
-      );
+  try {
+    setLoading(true);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
+    const { data } = await axios.put(
+      `http://localhost:5000/api/chat/groupadd`,
+      {
+        chatId: selectedChat._id,
+        userId: user1._id,
+      },
+      config
+    );
 
-      setSelectedChat(data);
-      setFetchAgain(!fetchAgain);
-      setLoading(false);
-    } catch (error) {
+    setSelectedChat(data);
+    setFetchAgain(!fetchAgain);
+    setLoading(false);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
       toast({
         title: "Error Occurred!",
-        description: error.response.data.message,
+        description: error.response?.data?.message || 'An unknown error occurred',
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
-      setLoading(false);
+    } else {
+      toast({
+        title: "Unexpected Error!",
+        description: "An unexpected error occurred",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
     }
-  };
+    setLoading(false);
+  }
+};
 
   const handleRemove = async (user1: User) => {
+    // Check if the current user is an admin or the user to be removed
     if (selectedChat.groupAdmin._id !== user._id && user1._id !== user._id) {
       toast({
         title: "Only admins can remove someone!",
@@ -176,7 +200,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }:any) 
       });
       return;
     }
-
+  
     try {
       setLoading(true);
       const config = {
@@ -192,24 +216,34 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }:any) 
         },
         config
       );
-
+  
       setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       fetchMessages();
-      setLoading(false);
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
+      if (axios.isAxiosError(error)) {
+        toast({
+          title: "Error Occurred!",
+          description: error.response?.data?.message || 'An unknown error occurred',
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else {
+        toast({
+          title: "Unexpected Error!",
+          description: "An unexpected error occurred",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    } finally {
       setLoading(false);
     }
   };
-
   return (
     <>
       <IconButton display={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} aria-label={""} />

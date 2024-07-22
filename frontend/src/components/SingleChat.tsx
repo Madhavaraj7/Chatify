@@ -21,7 +21,7 @@ var socket: Socket<DefaultEventsMap, DefaultEventsMap>, selectedChatCompare: { _
 
 
 const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
@@ -72,36 +72,41 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
     }
   };
 
-  const sendMessage = async (event: { key: string; type: string }) => {
-    if ((event.key === "Enter" || event.type === "click") && newMessage) {
-      socket.emit("stop typing", selectedChat._id);
-      try {
-        const config = {
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-        };
-        setNewMessage("");
-        const { data } = await axios.post(
-          "http://localhost:5000/api/message",
-          {
-            content: newMessage,
-            chatId: selectedChat,
-          },
-          config
-        );
-        socket.emit("new message", data);
-        setMessages([...messages, data]);
-      } catch (error) {
-        toast({
-          title: "Error Occured!",
-          description: "Failed to send the Message",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom",
-        });
+  const sendMessage = async (event: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) => {
+    const isKeyPress = (e: any): e is React.KeyboardEvent<HTMLInputElement> => e.key !== undefined;
+    const isClick = (e: any): e is React.MouseEvent<HTMLButtonElement> => e.type === 'click';
+    
+    if ((isKeyPress(event) && event.key === "Enter") || (isClick(event) && event.type === "click")) {
+      if (newMessage) {
+        socket.emit("stop typing", selectedChat._id);
+        try {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          };
+          setNewMessage("");
+          const { data } = await axios.post(
+            "http://localhost:5000/api/message",
+            {
+              content: newMessage,
+              chatId: selectedChat,
+            },
+            config
+          );
+          socket.emit("new message", data);
+          setMessages((prevMessages) => [...prevMessages, data]);
+        } catch (error) {
+          toast({
+            title: "Error Occurred!",
+            description: "Failed to send the Message",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+          });
+        }
       }
     }
   };

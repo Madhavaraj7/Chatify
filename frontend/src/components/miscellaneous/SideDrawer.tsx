@@ -14,39 +14,43 @@ import {
   useDisclosure,
   DrawerOverlay,
   DrawerContent,
-  DrawerHeader,
   DrawerBody,
   useToast,
   Spinner,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import NotificationBadge from "react-notification-badge";
-
 import { BellIcon, ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { getSender } from "../../config/chatLogic.js";
-
+import { getSender } from "../../config/chatLogic";
 import ChatLoading from "../ChatLoading";
 import UserListItem from "../userAvatar/UserListItem";
 
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  pic: string;
+  token: string;
+}
+
+
 function SideDrawer() {
-  const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [loadingChat, setLoadingChat] = useState(false);
+  const [search, setSearch] = useState<string>("");
+  const [searchResult, setSearchResult] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingChat, setLoadingChat] = useState<boolean>(false);
 
   const toast = useToast();
 
-  const { user, setSelectedChat, chats, setChats,notification,setNotification } = ChatState();
+  const { user, setSelectedChat, chats, setChats, notification, setNotification } = ChatState();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleSearchChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
@@ -71,7 +75,7 @@ function SideDrawer() {
         },
       };
 
-      const { data } = await axios.get(
+      const { data } = await axios.get<User[]>(
         `http://localhost:5000/api/user?search=${search}`,
         config
       );
@@ -80,19 +84,18 @@ function SideDrawer() {
       setSearchResult(data);
     } catch (error) {
       toast({
-        title: "Error Occured!",
+        title: "Error Occurred!",
         description: "Failed to Load the Search Results",
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "bottom-left",
       });
+      setLoading(false);
     }
   };
 
-  const accessChat = async (userId: any) => {
-    console.log(userId);
-
+  const accessChat = async (userId: string) => {
     try {
       setLoadingChat(true);
       const config = {
@@ -107,11 +110,11 @@ function SideDrawer() {
         config
       );
 
-      if (!chats.find((c: { _id: any; }) => c._id === data._id)) setChats([data, ...chats]);
+      if (!chats.find((c: { _id: string }) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
       setLoadingChat(false);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error fetching the chat",
         description: error.message,
@@ -120,12 +123,11 @@ function SideDrawer() {
         isClosable: true,
         position: "bottom-left",
       });
+      setLoadingChat(false);
     }
   };
 
-  const clearSearch = () => {
-    setSearch("");
-  };
+  
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
@@ -174,11 +176,8 @@ function SideDrawer() {
         </Text>
         <Box display="flex" alignItems="center">
           <Menu>
-          <MenuButton p={1}>
-              <NotificationBadge
-                count={notification.length}
-                // effect={Effect.SCALE}
-              />
+            <MenuButton p={1}>
+              <NotificationBadge count={notification.length} />
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
             <MenuList pl={2}>
@@ -206,12 +205,7 @@ function SideDrawer() {
               rightIcon={<ChevronDownIcon />}
               _hover={{ bg: "teal.600" }}
             >
-              <Avatar
-                size="sm"
-                cursor="pointer"
-                name={user.name}
-                src={user.pic}
-              />
+              <Avatar size="sm" cursor="pointer" name={user.name} src={user.pic} />
             </MenuButton>
             <MenuList>
               <ProfileModal user={user}>
@@ -227,7 +221,6 @@ function SideDrawer() {
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
-          {/* <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader> */}
           <DrawerBody>
             <Box display="flex" pb={2}>
               <Input
