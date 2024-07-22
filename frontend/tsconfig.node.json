@@ -7,7 +7,8 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["vite", "@vitejs/plugin-react"]
   },
   "include": ["vite.config.ts"]
 }
