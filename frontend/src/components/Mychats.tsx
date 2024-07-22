@@ -50,7 +50,7 @@ const MyChats: React.FC<Props> = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get<Chat[]>(
-        import.meta.env.VITE_APP_BACKEND_ENV +"/api/chat",
+        "http://localhost:5000/api/chat",
         config
       );
       setChats(data);

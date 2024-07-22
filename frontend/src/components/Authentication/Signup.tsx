@@ -4,7 +4,7 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
-import  { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Signup: React.FC = () => {
@@ -123,7 +123,7 @@ const Signup: React.FC = () => {
       };
 
       const { data } = await axios.post(
-        import.meta.env.VITE_APP_BACKEND_ENV +"/api/user",
+        "http://localhost:5000/api/user",
         { name, email, password, pic },
         config
       );

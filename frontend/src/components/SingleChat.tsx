@@ -10,14 +10,14 @@ import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons"; // Import th
 import ProfileModal from "./miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
-import * as animationData from "../animations/typing.json";
+import animationData from "../animations/typing.json";
 
 import io, { Socket } from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../context/ChatProvider";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-const ENDPOINT = import.meta.env.VITE_APP_BACKEND_ENV ; // "https://talk-a-tive.herokuapp.com"; -> After deployment
-let socket: Socket<DefaultEventsMap, DefaultEventsMap>, selectedChatCompare: { _id: any; };
+const ENDPOINT = "http://localhost:5000"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+var socket: Socket<DefaultEventsMap, DefaultEventsMap>, selectedChatCompare: { _id: any; };
 
 
 const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
@@ -53,7 +53,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
       setLoading(true);
 
       const { data } = await axios.get(
-        import.meta.env.VITE_APP_BACKEND_ENV +`/api/message/${selectedChat._id}`,
+        `http://localhost:5000/api/message/${selectedChat._id}`,
         config
       );
       setMessages(data);
@@ -88,7 +88,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
           };
           setNewMessage("");
           const { data } = await axios.post(
-            import.meta.env.VITE_APP_BACKEND_ENV +"/api/message",
+            "http://localhost:5000/api/message",
             {
               content: newMessage,
               chatId: selectedChat,
@@ -153,11 +153,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
       setTyping(true);
       socket.emit("typing", selectedChat._id);
     }
-    const lastTypingTime = new Date().getTime();
-    const timerLength = 3000;
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
     setTimeout(() => {
-      const timeNow = new Date().getTime();
-      const timeDiff = timeNow - lastTypingTime;
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
       if (timeDiff >= timerLength && typing) {
         socket.emit("stop typing", selectedChat._id);
         setTyping(false);

@@ -1,18 +1,12 @@
-import  {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface ChatContextType {
-  selectedChat: any;
+  selectedChat: any; 
   setSelectedChat: React.Dispatch<React.SetStateAction<any>>;
-  user: any;
+  user: any; 
   setUser: React.Dispatch<React.SetStateAction<any>>;
-  notification: any[];
+  notification: any[]; 
   setNotification: React.Dispatch<React.SetStateAction<any[]>>;
   chats: any;
   setChats: React.Dispatch<React.SetStateAction<any>>;

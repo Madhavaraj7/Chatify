@@ -72,7 +72,7 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get<User[]>(import.meta.env.VITE_APP_BACKEND_ENV +`/api/user?search=${query}`, config);
+      const { data } = await axios.get<User[]>(`http://localhost:5000/api/user?search=${query}`, config);
       setSearchResult(data);
     } catch (error) {
       toast({
@@ -111,7 +111,7 @@ const GroupChatModal = ({ children }: GroupChatModalProps) => {
         },
       };
       const { data } = await axios.post(
-        import.meta.env.VITE_APP_BACKEND_ENV +`/api/chat/group`,
+        `http://localhost:5000/api/chat/group`,
         {
           name: groupChatName,
           users: JSON.stringify(selectedUsers.map((u) => u._id)),

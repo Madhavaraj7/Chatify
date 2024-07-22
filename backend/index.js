@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { Server } from "socket.io";
 import path from "path";
 
+
 // Importing custom modules
 import { chats } from "./data/data.js";
 import connectDB from "./config/db.js";
@@ -22,38 +23,54 @@ connectDB();
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
-const FRONTEND_ENV = process.env.FRONTEND_ENV;
-const SOCKET_IO_ORIGINS = process.env.SOCKET_IO_ORIGINS;
 
 // Middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: FRONTEND_ENV.replace(/\/$/, ""),  // Ensure no trailing slash
-    credentials: true,
-  })
-);
+app.use(cors());
+
+// Default route
+// app.get("/", (req, res) => {
+//   res.send("API is running");
+// });
 
 // Routes
 app.use("/api/user", userRoute);
-
 app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
+
+//deployment
+
+const __dirname = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+  console.log('Production mode');
+  app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+  );
+} else {
+  console.log('Development mode');
+  app.get("/", (req, res) => {
+    res.send("API is running..");
+  });
+}
+
+
 
 // Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 
 // Create HTTP server
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const server = app.listen(process.env.PORT || 5000, () => {
+  console.log(`Server running on PORT http://localhost:${process.env.PORT}...`);
 });
 
 // Set up Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: SOCKET_IO_ORIGINS.split(','), 
+    origin: ["http://localhost:3000", "http://localhost:5173"], // Add any other origins as needed
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,
@@ -92,3 +109,6 @@ io.on("connection", (socket) => {
     socket.leave(userData._id);
   });
 });
+
+
+
