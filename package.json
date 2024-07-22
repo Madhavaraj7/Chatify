@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon backend/index.js",
-    "build":"npm install && cd ./frontend && npm install && npm run build"
+   "build": "npm install && cd frontend && npm install && npm run build && cd .. "
 
   },
   "author": "Madhav",
