@@ -19,7 +19,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useState, ChangeEvent } from "react";
-import NotificationBadge from "react-notification-badge";
+// import NotificationBadge from "react-notification-badge";
 import { BellIcon, ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
@@ -177,7 +177,7 @@ function SideDrawer() {
         <Box display="flex" alignItems="center">
           <Menu>
             <MenuButton p={1}>
-              <NotificationBadge count={notification.length} />
+              {/* <NotificationBadge count={notification.length} /> */}
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
             <MenuList pl={2}>
