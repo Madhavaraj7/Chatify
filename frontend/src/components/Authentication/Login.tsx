@@ -47,7 +47,7 @@ const Login = () => {
     setLoading(true);
   
     try {
-      const response = await fetch("http://localhost:5000/api/user/login", {
+      const response = await fetch(import.meta.env.VITE_APP_BACKEND_ENV +"/api/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

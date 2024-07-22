@@ -76,7 +76,7 @@ function SideDrawer() {
       };
 
       const { data } = await axios.get<User[]>(
-        `http://localhost:5000/api/user?search=${search}`,
+        import.meta.env.VITE_APP_BACKEND_ENV +`/api/user?search=${search}`,
         config
       );
 
@@ -105,7 +105,7 @@ function SideDrawer() {
         },
       };
       const { data } = await axios.post(
-        `http://localhost:5000/api/chat`,
+        import.meta.env.VITE_APP_BACKEND_ENV +`/api/chat`,
         { userId },
         config
       );
