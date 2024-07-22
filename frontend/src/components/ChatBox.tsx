@@ -3,7 +3,7 @@ import "./styles.css";
 import { ChatState } from "../context/ChatProvider";
 import SingleChat from "./SingleChat";
 
-const Chatbox = ({fetchAgain,setFetchAgain}) => {
+const Chatbox = ({fetchAgain,setFetchAgain}:any) => {
   const { selectedChat } = ChatState();
 
   return (

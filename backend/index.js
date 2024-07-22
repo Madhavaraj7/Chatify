@@ -4,6 +4,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
+import path from "path";
+
 
 // Importing custom modules
 import { chats } from "./data/data.js";
@@ -27,14 +29,34 @@ app.use(express.json());
 app.use(cors());
 
 // Default route
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
+// app.get("/", (req, res) => {
+//   res.send("API is running");
+// });
 
 // Routes
 app.use("/api/user", userRoute);
 app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
+
+//deployment
+
+const __dirname = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+  console.log('Production mode');
+  app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+  );
+} else {
+  console.log('Development mode');
+  app.get("/", (req, res) => {
+    res.send("API is running..");
+  });
+}
+
+
 
 // Error handling middleware
 app.use(notFound);
@@ -42,7 +64,7 @@ app.use(errorHandler);
 
 // Create HTTP server
 const server = app.listen(process.env.PORT || 5000, () => {
-  console.log(`Server running on PORT http://localhost:${process.env.PORT || 5000}...`);
+  console.log(`Server running on PORT http://localhost:${process.env.PORT}...`);
 });
 
 // Set up Socket.IO
